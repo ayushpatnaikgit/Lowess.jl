@@ -41,41 +41,6 @@ The above code creates some random data points sampled out of a sine curve, with
 
 Finally, we get the scatter plot of the input points, and the smooth plot using `us` and `vs`.
 
-# Comparison with [Loess.jl](https://github.com/JuliaStats/Loess.jl)
-
-Our package is an alternative to [Loess.jl](https://github.com/JuliaStats/Loess.jl), which
-exports the more general LOESS predictor. In this section, we benchmark the performance of both the packages on a common dataset and do a comparison in terms of the resources used.
-
-For our test, we use the example given in the tutorial. For the benchmarks, we use the `BenchmarkTools` package. In the below code, we benchmark the performance of our package code.
-
-```@repl benchmarking
-using BenchmarkTools, Lowess, Random;
-Random.seed!(42);
-
-xs = 10 .* rand(100);
-xs = sort(xs);
-ys = sin.(xs) .+ 0.5 * rand(100);
-
-@benchmark begin
-    model = lowess_model(xs, ys, 0.2)
-    us = range(extrema(xs)...; step = 0.1)
-    vs = model(us)
-end
-```
-
-The exact same benchmarking code, but with [Loess.jl](https://github.com/JuliaStats/Loess.jl), is given below.
-
-```@repl benchmarking
-using Loess;
-@benchmark begin
-    model = loess(xs, ys, span = 0.5)
-    us = range(extrema(xs)...; step = 0.1)
-    vs = predict(model, us)
-end
-```
-
-For the above test, our package code runs much faster compared to [Loess.jl](https://github.com/JuliaStats/Loess.jl).
-
 # References
 
 [1] Cleveland, W. S. (1979). Robust locally weighted regression and smoothing scatterplots. Journal of the American statistical association, 74(368), 829-836. DOI: 10.1080/01621459.1979.10481038
